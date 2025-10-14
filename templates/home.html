@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Date Extractor</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='home.css') }}">    </head>
+    <body>
+        <div id="output"></div>
+            <table id="grants-table">
+                <thead>
+                    <tr>
+                        <th>Grant Title</th>
+                        <th>Amount</th>
+                        <th>Opens</th>
+                        <th>Deadline</th>
+                        <th>Requirements</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody id="grants-body">
+                </tbody>
+            </table>
+            <template id="grant-template">
+                <tr>
+                    <td><span class="title"></span> </td>
+                    <td><span class="amount"></span></td>
+                    <td><span class="open-date"></span> </td>
+                    <td><span class="close-date"></span></td>
+                    <td>
+                        <button class = "read-more" data-type="requirements">
+                            <span class="requirements clamp"></span> 
+                        </button>
+                    </td>
+
+                    <td>
+                        <button class = "read-more" data-type="description">
+                            <span class="description clamp"></span>
+                        </button>
+                    </td>
+
+                </tr>
+            </template>
+
+            <div id="modal" class="modal">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <p id="modal-text"></p>
+                </div>
+            </div>
+
+        <script src="{{ url_for('static', filename='home.js') }}"></script>
+    </body>
+</html>
