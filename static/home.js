@@ -29,8 +29,8 @@ fetch("/api/data")
 
         clone.querySelector(".title").textContent = grant.title;
         clone.querySelector(".amount").textContent = grant.amount ? grant.amount.join(", ") : "N/A";
-        clone.querySelector(".open-date").textContent = grant.open_date || "TBD";
-        clone.querySelector(".close-date").textContent = grant.close_date || "TBD";
+        clone.querySelector(".open-date").textContent = grant.open_date || "-----";
+        clone.querySelector(".close-date").textContent = grant.close_date || "-----";
         clone.querySelector(".requirements").textContent = grant.Requirements || "...";
         clone.querySelector(".description").textContent = grant.Description || "...";
         

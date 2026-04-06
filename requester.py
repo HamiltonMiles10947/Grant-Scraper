@@ -64,6 +64,10 @@ grant_requirements_regex = re.compile(
     r")\b",
     re.IGNORECASE
 )
+grant_title_regex = re.compile(r"\b(?:grant|program|challenge|fellowship|partnership|prize|award|fund|initiative|competition|accelerator|scholarship|residency|incubator|project)s?\b", re.IGNORECASE)
+
+grant_list = []
+
 
 @dataclass
 class GrantInfo: 
@@ -74,6 +78,70 @@ class GrantInfo:
     Requirements: str | None = None
     Description: str | None = None
     link: str | None = None
+
+def parse_link(links):
+    for link_title, link in links:
+        if link_title:
+            break
+        # if link_title is something like learn more or sound like a grant
+        #     then we good
+        # if not then it still might be fine
+        # if link leads to something grant related we also good
+
+def check_info_validatiy():
+    x = 0
+    # make sure that the links title and text all seem to be related somehow
+    # maybe give points for shared words and hope it gets a high enough score to signifiy similarity
+
+def create_new_grant_entry(title, info, links):
+    parse_link(links)
+    check_info_validaty()
+    entry = GrantInfo(title = title)
+    
+    parse_money(info, entry )
+    parse_deadline(info, entry)
+    parse_description(info, entry)
+
+    grant_list.append(entry)
+
+# not currently used? why?
+def get_text_from_page():
+    titles = ["h1", "h2", "h3", "h4", "h5", "h6"]
+    for header in soup.findAll(titles):
+        header_type = header.name
+        bibliography = []
+        text_entry = []
+        if grant_title_regex.search(header):
+            # add the header to the list or just do the work
+            title = header.text.strip()
+            
+            # find next paragraph or list. whicever comes first
+            distance_from_title = 0
+            for next_tag in header.find_next(["p", "ul", "a"]+ titles):
+                if distance_from_title >= 4 or next_tag.name in titles:
+                    break
+                elif(next_tag.name == "p"):
+                    text_entry.append(next_tag.get_text())
+                elif(next_tag.name == "ul"):
+                    for bullet in next_tag.find_all("li"):
+                        text_entry.append(bullet.get_text())
+
+                elif(next_tag.name == "a"):
+                    link = next_tag.get("href")
+                    link_text = next_tag.get_text(strip=True)
+                    bibliography.append((link_text, link))
+                    # parsed_links = parse_link(link_text, link)
+                distance_from_title += 1
+            
+            final_text = "\n".join(text_entry)
+            
+            create_new_grant_entry(title, final_text, bibliography) 
+
+
+
+
+            
+
 
 def print_deadline( date):
     dline = "?"
@@ -91,9 +159,9 @@ def parse_deadline(text, entry, ref=None):
         "ordinal": re.compile(r"\b\d{1,2}(st|nd|rd|th)\b"), 
         "months": re.compile(r"\b(jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|"
         r"jul(?:y)?|aug(?:ust)?|sep(?:t(?:ember)?)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\b", re.IGNORECASE),
-        # "seasons": re.compile(r"\b(winter|spring|summer|fall|autumn)\b"),
+        "seasons": re.compile(r"\b(?:early|late)?\s*(winter|spring|summer|fall|autumn)\b", re.IGNORECASE),
     }
-    seasons_regex = re.compile(r"\b(winter|spring|summer|fall|autumn)\b", re.IGNORECASE)
+    seasons_regex = re.compile(r"\b(?:early|late)?\s*(winter|spring|summer|fall|autumn)\b", re.IGNORECASE)
    
    
     potential_dates = []
@@ -124,9 +192,12 @@ def parse_deadline(text, entry, ref=None):
         try:
             # time_marker = date.split()[0]
             season_match = re.search(seasons_regex, date)
+            # print("Seasons are listed here: " + season_match)
             if season_match:
                 # the_date = time_marker + " " + season_match.group()
-                parsed_dates.append((season_match.group(), label))
+                parsed_dates.append((season_match.group().title(), label))
+                # print("___________________"+ x)
+
             else:
                 # the_date = time_marker + " " + parser.parse(date, fuzzy=True)
                 parsed_dates.append((parser.parse(date, fuzzy=True), label))
@@ -139,12 +210,20 @@ def parse_deadline(text, entry, ref=None):
         if label == " " and x == 1:
             label = "Opens"  
         elif label == " " and x == 2:
-            label = "Deadline"
+            label = "Deadline"            
 
         if label == "Deadline":
-            entry.close_date = print_deadline(dt)
+            if entry.close_date:
+                entry.close_date = entry.close_date + " to " + print_deadline(dt)
+                # multiple_closings = True
+            else:
+                entry.close_date = print_deadline(dt)
         elif label == "Opens":
-            entry.open_date = print_deadline(dt)
+            if entry.open_date:
+                entry.open_date = entry.open_date +" to "+ print_deadline(dt)
+                # multiple_openings = True
+            else:
+                entry.open_date = print_deadline(dt)
         
         deadline = print_deadline( dt)
         print(label, ":", deadline)
@@ -195,6 +274,9 @@ def index():
 def get_data():
     print("Headers _-----------------------------")
     grant_list = []
+
+    # get_text_from_page()
+
     for header in soup.find_all("h2"):
         title = header.text.strip()
         print(title)
@@ -243,5 +325,4 @@ if __name__ == "__main__":
 # Web design 
 # Data analysis 
 # create AI 
-
 # signals company in utah working on ai with the uninitiatied
