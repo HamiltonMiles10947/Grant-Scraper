@@ -12,7 +12,6 @@
 //   outputDiv.innerHTML = "<pre>" + JSON.stringify(data, null, 2) + "</pre>";
 // });
 
-
 fetch("/api/data")
     .then(response => response.json())
     .then(data => {
@@ -28,7 +27,7 @@ fetch("/api/data")
         const clone = template.content.cloneNode(true);
 
         clone.querySelector(".title").textContent = grant.title;
-        clone.querySelector(".amount").textContent = grant.amount ? grant.amount.join(", ") : "N/A";
+        clone.querySelector(".amount").textContent = grant.amount ? grant.amount.join(", ") : "---";
         clone.querySelector(".open-date").textContent = grant.open_date || "-----";
         clone.querySelector(".close-date").textContent = grant.close_date || "-----";
         clone.querySelector(".requirements").textContent = grant.Requirements || "...";
@@ -38,7 +37,7 @@ fetch("/api/data")
         readMoreBtns.forEach(button => {
           button.addEventListener("click", () => {
             const type = button.dataset.type;
-            const text = type === "requirements" ? grant.Requirements : grant.Description;
+            const text = type === "requirements" ? grant.Requirements : grant.Description || " ";
 
             if(grant.link){
               modalText.innerHTML = `<p> ${text}</p> <a href="${grant.link}" target="_blank" rel="noopener noreferrer">Learn more</a>`;
