@@ -44,3 +44,4 @@ Enhance error handling and logging
 
 ## Notes
 Run this project by running main.py and going to "http://127.0.0.1:5000" to see the resulting table.
+<img width="1840" height="972" alt="image" src="https://github.com/user-attachments/assets/88f2ff82-e9bf-45e2-9681-eb07d95439b1" />
