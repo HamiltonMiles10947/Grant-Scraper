@@ -28,6 +28,8 @@ button {
 }
 
 #grants-table td{
+  overflow: hidden;
+  word-break: break-word;
   padding: 1%;  
   padding-right: 1%;
   size: 25px;
@@ -74,7 +76,9 @@ button {
   text-overflow: ellipsis;
 
   max-height: 6em;             
-  line-height: 1.5em;          
+  line-height: 1.5em;   
+  
+  word-break: break-word;
 }
 
 /* .read-more:nth-of-type(even){
